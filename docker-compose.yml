@@ -21,7 +21,9 @@ services:
       - "5000:8080"
 
   source:
-    image: python:3.8
+    build:
+        context: .
+        dockerfile: ./compose/source/Dockerfile
     volumes:
       - ./source:/app
     command: python /app/start.py
