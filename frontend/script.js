@@ -23,9 +23,10 @@ var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext("2d");
 
 sock.onmessage = function showMessage(message) {
-    var data = JSON.parse(message.data);
-
+    var str_data = JSON.parse(message.data);
+    var data = JSON.parse(str_data)
     // умножаем на три, т.к. у нас сторона 300х300, а на сервере - 100х100
+    console.log(typeof(data))
     console.log(data)
     let x = 3*data.x;
     let y = 3*data.y;
