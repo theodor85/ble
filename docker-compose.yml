@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: ./compose/frontend/Dockerfile
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "8000:8080"
+
+  backend:
+    build:
+      context: .
+      dockerfile: ./compose/backend/Dockerfile
+    volumes:
+      - ./backend:/app
+    command: python /app/start.py
+    ports: 
+      - "5000:8080"
+
+  source:
+    image: python:3.8
+    volumes:
+      - ./source:/app
+    command: python /app/start.py
