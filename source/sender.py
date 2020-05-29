@@ -1,4 +1,5 @@
 import logging
+import json
 
 import requests
 from requests.exceptions import RequestException
@@ -21,22 +22,27 @@ def send_data(data):
         msg = f"Points data was sent: {data}"
         logger.info(msg)
 
-def make_body_request(r_list):
+def make_body_request(r_list_anchor1, r_list_anchor2):
     ''' Функция возвращает тело post-запроса к бэкенду.
         На вход получает список с расстояниями от якорей до метки
     '''
-    return {
-        "ble_points": [
-            {
-                "id_point": "point1",
-                "anchors_data": [
-                    {
-                        "anchor1":r_list[0]
-                    },
-                    {
-                        "anchor2":r_list[1]
-                    },
-                ]
-            },
-        ]
-    }
+    
+    points = list()
+    
+    for point in r_list_anchor1:
+        points.append({
+            "addr_point": point[0],
+            "anchors_data": [
+                {"anchor1": point[1]}
+            ]
+        })
+    
+    for point in r_list_anchor2:
+        for p in points:
+            if p["addr_point"] == point[0]:
+                p["anchors_data"].append({
+                    "anchor2": point[1]
+                })
+                break
+
+    return {"ble_points": points}

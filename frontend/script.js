@@ -17,16 +17,17 @@ var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext("2d");
 
 sock.onmessage = function draw(message) {
-    var coords = JSON.parse(JSON.parse(message.data))
-    // умножаем на три, т.к. у нас сторона 300х300, а на сервере - 100х100
-    let x = 3*coords.x;
-    let y = 3*coords.y;
-    console.log('x = ' + x + '; y = ' + y)
-
-    ctx.clearRect(0,0,300,300);
+    var devices = JSON.parse(JSON.parse(message.data))
     
-    ctx.beginPath();
-    ctx.fillStyle = 'green';
-    ctx.arc(x, y, 5, 0, Math.PI*2);
-    ctx.fill();
+    ctx.clearRect(0,0,300,300);
+    for (let i = 0; i < devices.length; i++) {
+        const device = devices[i];
+        // умножаем на три, т.к. у нас сторона 300х300, а на сервере - 100х100
+        let x = 3*device.x;
+        let y = 3*device.y;
+        ctx.beginPath();
+        ctx.fillStyle = 'green';
+        ctx.arc(x, y, 5, 0, Math.PI*2);
+        ctx.fill();
+    }
 }

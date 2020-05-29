@@ -1,4 +1,5 @@
 from time import sleep
+from random import randint
 
 from bluepy.btle import Scanner, ScanEntry
 
@@ -23,32 +24,60 @@ class MyScanEntry:
         return self._rssi
 
 
-def my_scan(timeout):
-    sleep(timeout)
-    return [
-        ScanEntry('12345', 'ADDR_TYPE_PUBLIC', -25),
-        ScanEntry('54321', 'ADDR_TYPE_PUBLIC', -50),
-    ]
-
-
 TEST_DATA = [
-    [51, 51], # 1
-    [63, 45], # 2
-    [76, 42], # 3
-    [89, 45], # 4
-    [86, 58], # 5
-    [84, 72], # 6
-    [86, 86], # 7
-    [89, 100], # 8
-    [76, 99], # 9
-    [67, 92], # 10
-    [64, 78], # 11
-    [64, 64], # 12
-    [50, 67], # 13
-    [45, 63], # 14
+    [-44.15, -44.15],
+    [-45.98, -43.06],
+    [-47.61, -42.46],
+    [-48.98, -43.06],
+    [-48.68, -45.26],
+    [-48.48, -47.14],
+    [-48.68, -48.68],
+    [48.98, -50.0],
+    [-47.61, -49.91],
+    [-46.52, -49.27],
+    [-46.12, -47.84],
+    [-46.12, -46.12],
+    [-43.97, -46.52],
+    [-43.06, -45.98],
 ]
 
-def scan(timeout):
-    scanner = Scanner()
-    scanner.scan = my_scan
-    return scanner.scan(timeout)
+def my_scan(anchor, timeout):
+    sleep(timeout)
+    result = list()
+
+    # точка 1
+    elem = TEST_DATA[randint(0, 13)]
+    if anchor=='anchor1':
+        signal_level_dBm = elem[0]
+    else:
+        signal_level_dBm = elem[1]
+    result.append(MyScanEntry('12345', 'ADDR_TYPE_PUBLIC', signal_level_dBm))
+
+    # точка 2
+    elem = TEST_DATA[randint(0, 13)]
+    if anchor=='anchor1':
+        signal_level_dBm = elem[0]
+    else:
+        signal_level_dBm = elem[1]
+    result.append(MyScanEntry('54321', 'ADDR_TYPE_PUBLIC', signal_level_dBm))
+
+    # точка 3
+    elem = TEST_DATA[randint(0, 13)]
+    if anchor=='anchor1':
+        signal_level_dBm = elem[0]
+    else:
+        signal_level_dBm = elem[1]
+    result.append(MyScanEntry('3698', 'ADDR_TYPE_PUBLIC', signal_level_dBm))
+
+    return result
+
+def scan_anchor(anchor, timeout):
+    
+    if anchor=='anchor1':
+        index=0
+    elif anchor=='anchor2':
+        index=1
+
+    scanner = Scanner(index)
+    scanner.scan = my_scan  # здесь делаем заглушку на функцию с тестовыми данными
+    return scanner.scan(anchor, timeout)
