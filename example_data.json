@@ -1,0 +1,26 @@
+{
+    "ble_points": [
+        {
+            "id_point": "123",
+            "anchors_data": [
+                {
+                    "anchor1":7.6
+                },
+                {
+                    "anchor1":15     
+                }
+            ]
+        },
+        {
+            "id_point": "123",
+            "anchors_data": [
+                {
+                    "anchor1":12
+                },
+                {
+                    "anchor1":17     
+                }
+            ]
+        }
+    ]
+}
