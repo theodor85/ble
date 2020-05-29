@@ -8,7 +8,8 @@ import aiohttp
 from aiohttp import web
 
 from coords import get_device_coords
-from restricted_area_checker import check_restricted_area, Config, get_restricted_area_size
+from restricted_area_checker import is_restricted_area_violation
+from restricted_area_checker import Config, get_restricted_area_size
 
 
 logger = logging.getLogger("backend")
@@ -65,7 +66,7 @@ async def websocket_handler(request):
                         'dev_addr': device[0],
                         'x': device[1],
                         'y': device[2],
-                        'violation': False
+                        'violation': is_restricted_area_violation(device[1], device[2])
                     }
                 )
             await ws.send_json(json.dumps(data))

@@ -3,24 +3,24 @@
 CONFIG_FILE_PATH = 'config.conf'
 
 
-def check_restricted_area(x, y):
-    ''' Возвращает False, если точка попадает в запретную зону.
-        Иначе - True
+def is_restricted_area_violation(x, y):
+    ''' Возвращает True, если точка попадает в запретную зону.
+        Иначе - False
     '''
     try:
-        restr_area_size = Config().restricted_area
+        restr_area_size = int(Config().restricted_area)
     except AttributeError:
-        # запретная зона не определена, всегда True
-        return True
+        # запретная зона не определена, всегда False
+        return False
 
     if y < restr_area_size:
-        return False
-    else:
         return True
+    else:
+        return False
 
 def get_restricted_area_size():
     try:
-        restr_area_size = Config().restricted_area
+        restr_area_size = int(Config().restricted_area)
     except AttributeError:
         # запретная зона не определена
         return 0
