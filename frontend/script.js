@@ -15,16 +15,27 @@ sock.onerror = function (error) {
 
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext("2d");
+var restricted_area = 0
+var scale = 3
 
 sock.onmessage = function draw(message) {
-    var devices = JSON.parse(JSON.parse(message.data))
+    var data = JSON.parse(JSON.parse(message.data))
     
+    if (data.restricted_area) {
+        restricted_area = data.restricted_area     
+    }
     ctx.clearRect(0,0,300,300);
-    for (let i = 0; i < devices.length; i++) {
-        const device = devices[i];
-        // умножаем на три, т.к. у нас сторона 300х300, а на сервере - 100х100
-        let x = 3*device.x;
-        let y = 3*device.y;
+
+    // рисуем запретную зону
+    ctx.fillStyle = 'red'
+    ctx.fillRect(0, 0, 300, restricted_area*scale)
+
+    // рисуем точки
+    for (let i = 0; i < data.length; i++) {
+        const device = data[i];
+        // умножаем для масштабирования координат
+        let x = scale*device.x;
+        let y = scale*device.y;
         ctx.beginPath();
         ctx.fillStyle = 'green';
         ctx.arc(x, y, 5, 0, Math.PI*2);

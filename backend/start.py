@@ -8,6 +8,7 @@ import aiohttp
 from aiohttp import web
 
 from coords import get_device_coords
+from restricted_area_checker import check_restricted_area, Config, get_restricted_area_size
 
 
 logger = logging.getLogger("backend")
@@ -44,6 +45,12 @@ async def websocket_handler(request):
     ws = web.WebSocketResponse()
     await ws.prepare(request)
 
+    # отправляем данные о конфигурации запретной зоны
+    restr_area_data = {
+        "restricted_area": get_restricted_area_size()
+    }
+    await ws.send_json(json.dumps(restr_area_data))
+
     while True:
         await asyncio.sleep(3)
         try:
@@ -58,6 +65,7 @@ async def websocket_handler(request):
                         'dev_addr': device[0],
                         'x': device[1],
                         'y': device[2],
+                        'violation': False
                     }
                 )
             await ws.send_json(json.dumps(data))
@@ -70,4 +78,5 @@ app.add_routes([web.post('/points', get_points),
                 web.get('/sock', websocket_handler)])
 
 if __name__ == '__main__':
+    config = Config()
     web.run_app(app)
