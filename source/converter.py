@@ -23,7 +23,7 @@ def convert_dB_to_m(dB_level):
 def convert_from_dB_to_meters(devices_list):
     ''' Функция вычисляет расстояние, исходя из уровня сигнала
     '''
-    
+
     result = list()
     for dev in devices_list:
         addr = dev.addr

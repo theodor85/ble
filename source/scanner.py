@@ -1,7 +1,14 @@
+''' В модуле определены функции для сканирования устройств и получения
+    данных о них: адрес, тип адреса, уровинь сигнала (RSSI).
+    
+    В данный момент функция сканирования заменена заглушкой, 
+    используются тестовые уровни сигналов в TEST_DATA.
+'''
+
 from time import sleep
 from random import randint
 
-from bluepy.btle import Scanner, ScanEntry
+from bluepy.btle import Scanner
 
 
 class MyScanEntry:
