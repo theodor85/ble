@@ -24,6 +24,9 @@ coords_queue = deque()
 
 
 async def get_points(request):
+    ''' Получает данные о точках (устройтвах), преобразует их в
+        координаты, и помещает в очередь для отправки на frontend
+    '''
     data = await request.json()
 
     list_of_devices = list()
@@ -42,6 +45,9 @@ async def get_points(request):
     return web.Response(text='OK')
 
 async def websocket_handler(request):
+    ''' Принимает соединение по WebSocket и передает
+        на fronend данные об устройствах и запретной зоне.
+    '''
 
     ws = web.WebSocketResponse()
     await ws.prepare(request)
@@ -52,6 +58,7 @@ async def websocket_handler(request):
     }
     await ws.send_json(json.dumps(restr_area_data))
 
+    # отправляем данные об устройствах
     while True:
         await asyncio.sleep(3)
         try:

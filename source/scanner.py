@@ -5,6 +5,7 @@ from bluepy.btle import Scanner, ScanEntry
 
 
 class MyScanEntry:
+    ''' Класс-заглушка, заменяющий bluepy.btle.ScanEntry '''
 
     def __init__(self, addr, addrType, rssi):
         self._addr = addr
@@ -42,6 +43,8 @@ TEST_DATA = [
 ]
 
 def my_scan(anchor, timeout):
+    ''' Функция, имитирующая нахождение точек (устройств) '''
+
     sleep(timeout)
     result = list()
 
@@ -72,7 +75,9 @@ def my_scan(anchor, timeout):
     return result
 
 def scan_anchor(anchor, timeout):
-    
+    ''' Запускается сканирование устройств
+    '''
+
     if anchor=='anchor1':
         index=0
     elif anchor=='anchor2':

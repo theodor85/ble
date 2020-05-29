@@ -1,3 +1,6 @@
+''' В модуле реализованы функции для отправки данных на backend
+'''
+
 import logging
 import json
 
@@ -10,6 +13,7 @@ logger = logging.getLogger("source")
 
 
 def send_data(data):
+    ''' Отправка данных на backend '''
     try:
         response = requests.post(BACKEND_URL, data=json.dumps(data))
     except RequestException as req_exception:
