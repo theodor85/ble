@@ -47,49 +47,36 @@ TEST_DATA = [
     [-46.12, -46.12],
     [-43.97, -46.52],
     [-43.06, -45.98],
+    [-75.06, -45.98],
 ]
 
-def my_scan(anchor, timeout):
+def my_scan(timeout):
     ''' Функция, имитирующая нахождение точек (устройств) '''
 
     sleep(timeout)
     result = list()
 
     # точка 1
-    elem = TEST_DATA[randint(0, 13)]
-    if anchor=='anchor1':
-        signal_level_dBm = elem[0]
-    else:
-        signal_level_dBm = elem[1]
+    elem = TEST_DATA[randint(0, len(TEST_DATA)-1)]
+    signal_level_dBm = elem[0]
     result.append(MyScanEntry('12345', 'ADDR_TYPE_PUBLIC', signal_level_dBm))
 
     # точка 2
-    elem = TEST_DATA[randint(0, 13)]
-    if anchor=='anchor1':
-        signal_level_dBm = elem[0]
-    else:
-        signal_level_dBm = elem[1]
+    elem = TEST_DATA[randint(0, len(TEST_DATA)-1)]
+    signal_level_dBm = elem[0]
     result.append(MyScanEntry('54321', 'ADDR_TYPE_PUBLIC', signal_level_dBm))
 
     # точка 3
-    elem = TEST_DATA[randint(0, 13)]
-    if anchor=='anchor1':
-        signal_level_dBm = elem[0]
-    else:
-        signal_level_dBm = elem[1]
+    elem = TEST_DATA[randint(0, len(TEST_DATA)-1)]
+    signal_level_dBm = elem[0]
     result.append(MyScanEntry('3698', 'ADDR_TYPE_PUBLIC', signal_level_dBm))
 
     return result
 
-def scan_anchor(anchor, timeout):
+def scan_anchor(timeout):
     ''' Запускается сканирование устройств
     '''
 
-    if anchor=='anchor1':
-        index=0
-    elif anchor=='anchor2':
-        index=1
-
-    scanner = Scanner(index)
+    scanner = Scanner()
     scanner.scan = my_scan  # здесь делаем заглушку на функцию с тестовыми данными
-    return scanner.scan(anchor, timeout)
+    return scanner.scan(timeout)

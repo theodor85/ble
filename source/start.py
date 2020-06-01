@@ -19,25 +19,22 @@ handler.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
 
-SCAN_TIME = 3
+SCAN_TIME = 10
 
 
 if __name__ == "__main__":
     logger.info("******** Source started!")
 
     while True:
-        # получаем список устройств с уровнями сигналов для каждого якоря
-        devices_list_anchor1 = scan_anchor('anchor1', SCAN_TIME)
-        devices_list_anchor2 = scan_anchor('anchor2', SCAN_TIME) # list of MyScanEntry
-
-        # конвертируем децибелы в метры
-        devices_list_meters_anchor1 = convert_from_dB_to_meters(devices_list_anchor1)
-        devices_list_meters_anchor2 = convert_from_dB_to_meters(devices_list_anchor2)
+        # получаем список устройств с уровнями сигналов
+        devices_list = scan_anchor(SCAN_TIME)
+        
+        for device in devices_list:
+            logger.debug(f'''*** Найдено устройство: 
+                {device.addr} ({device.addrType}), RSSI={device.rssi} dB''')
 
         # переводим в формат для отправки
-        data_for_send = make_body_request(
-            devices_list_meters_anchor1,
-            devices_list_meters_anchor2)
+        data_for_send = make_body_request(devices_list)
 
         logger.info(f"Data for send: {data_for_send}")
 

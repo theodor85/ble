@@ -26,27 +26,17 @@ def send_data(data):
         msg = f"Points data was sent: {data}"
         logger.info(msg)
 
-def make_body_request(r_list_anchor1, r_list_anchor2):
+def make_body_request(devices_list):
     ''' Функция возвращает тело post-запроса к бэкенду.
-        На вход получает список с расстояниями от якорей до метки
+        На вход получает список устройств (ScanEntry)
     '''
     
     points = list()
-    
-    for point in r_list_anchor1:
+
+    for device in devices_list:
         points.append({
-            "addr_point": point[0],
-            "anchors_data": [
-                {"anchor1": point[1]}
-            ]
+            "addr_point": device.addr,
+            "rssi": device.rssi,
         })
-    
-    for point in r_list_anchor2:
-        for p in points:
-            if p["addr_point"] == point[0]:
-                p["anchors_data"].append({
-                    "anchor2": point[1]
-                })
-                break
 
     return {"ble_points": points}

@@ -6,20 +6,18 @@
 CONFIG_FILE_PATH = 'config.conf'
 
 
-def is_restricted_area_violation(x, y):
-    ''' Возвращает True, если точка попадает в запретную зону.
+def is_restricted_area_violation(signal_level):
+    ''' Возвращает True, если уровень сигнала меньше заданного.
         Иначе - False
     '''
     try:
-        restr_area_size = int(Config().restricted_area)
+        min_level = int(Config().min_level)
     except AttributeError:
         # запретная зона не определена, всегда False
         return False
 
-    if y < restr_area_size:
-        return True
-    else:
-        return False
+    return signal_level < min_level
+
 
 def get_restricted_area_size():
     try:
