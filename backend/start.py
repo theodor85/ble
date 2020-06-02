@@ -20,7 +20,7 @@ handler.setLevel(logging.DEBUG)
 
 logger.addHandler(handler)
 
-coords_queue = deque()
+devices_queue = deque()
 
 
 async def get_points(request):
@@ -28,20 +28,9 @@ async def get_points(request):
         координаты, и помещает в очередь для отправки на frontend
     '''
     data = await request.json()
-
-    list_of_devices = list()
-    for ble_point in data['ble_points']:
-        anchors_data = ble_point['anchors_data']
-        r1 = anchors_data[0]['anchor1']
-        r2 = anchors_data[1]['anchor2']
-        logger.info(f'Получены данные датчиков: r1={r1}; r2={r2}')
-
-        x, y = get_device_coords(r1, r2)
-
-        logger.info(f'Устройство: {ble_point["addr_point"]}; координаты: x={x}; y={y}')
-        list_of_devices.append([ble_point["addr_point"], x, y])
+    logger.info(f'Получены данные {data}')
     
-    coords_queue.appendleft(list_of_devices)
+    devices_queue.appendleft(data)
     return web.Response(text='OK')
 
 async def websocket_handler(request):
@@ -52,30 +41,16 @@ async def websocket_handler(request):
     ws = web.WebSocketResponse()
     await ws.prepare(request)
 
-    # отправляем данные о конфигурации запретной зоны
-    restr_area_data = {
-        "restricted_area": get_restricted_area_size()
-    }
-    await ws.send_json(json.dumps(restr_area_data))
-
     # отправляем данные об устройствах
     while True:
         await asyncio.sleep(3)
         try:
-            list_of_devices = coords_queue.pop()
+            data = devices_queue.pop()
         except IndexError:
             continue
         else:
-            data = list()
-            for device in list_of_devices:
-                data.append(
-                    {
-                        'dev_addr': device[0],
-                        'x': device[1],
-                        'y': device[2],
-                        'violation': is_restricted_area_violation(device[1], device[2])
-                    }
-                )
+            for device in data["ble_points"]:                 
+                device["violation"] = is_restricted_area_violation(device["rssi"])
             await ws.send_json(json.dumps(data))
 
     return ws

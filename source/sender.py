@@ -39,5 +39,5 @@ def make_body_request(source_name, devices_list):
 
     return {
         "anchor": source_name,
-        "ble_points": points,
+        "ble_points": devices,
     }
