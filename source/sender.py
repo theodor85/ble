@@ -32,10 +32,10 @@ def make_body_request(source_name, devices_list):
     
     devices = list()
     for device in devices_list:
-        devices.append{
+        devices.append({
             "addr_point": device.addr,
             "rssi": device.rssi,
-        }
+        })
 
     return {
         "anchor": source_name,
