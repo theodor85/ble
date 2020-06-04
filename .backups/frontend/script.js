@@ -44,10 +44,20 @@ const canvas_width = 300
 const canvas_height = 300
 const min_dB = -100
 const max_dB = -20
+var restricted_area = 0
 
 function displayDrawing(data){
     
+    if (data.restricted_area) {
+        restricted_area = data.restricted_area     
+    }
+    const scale = canvas_height / (max_dB - min_dB)
     ctx.clearRect(0,0,300,300);
+
+    // рисуем запретную зону
+    ctx.fillStyle = 'red'
+    let zone_y = Math.round( (restricted_area - min_dB) * scale )
+    ctx.fillRect(0, zone_y, 300, 300)
 
     // рисуем anchors
     // anchor1
@@ -75,7 +85,6 @@ function displayDrawing(data){
         points_number = data.length;
         const x = Math.round( canvas_width / (points_number+1) * (i + 1) )
 
-        const scale = canvas_height / (max_dB - min_dB)
         const average_signal = (device.rssi_anchor1 + device.rssi_anchor2) / 2
         const y = Math.round( scale * (average_signal - min_dB) )
 

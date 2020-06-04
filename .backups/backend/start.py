@@ -70,6 +70,13 @@ async def websocket_handler(request):
 
     ws = web.WebSocketResponse()
     await ws.prepare(request)
+    
+    # отправляем данные о конфигурации запретной зоны
+    restr_area_data = {
+        "restricted_area": get_restricted_area_size()
+    }
+    print(f'\nОтправлены данные о запретной зоне: {restr_area_data}\n')
+    await ws.send_json(json.dumps(restr_area_data))
 
     # отправляем данные об устройствах
     while True:
