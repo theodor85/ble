@@ -76,6 +76,7 @@ async def websocket_handler(request):
         await asyncio.sleep(SEND_TIMEOUT)
 
         data = devices_data.get_data()
+        print(f'\n******{data}\n')
         await ws.send_json(json.dumps(data))
 
     return ws
