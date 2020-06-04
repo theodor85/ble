@@ -46,7 +46,7 @@ sock.onmessage = function draw(message) {
     if (data.anchor=='anchor1') {
         div_id = 'devices1'
     }else{
-        div_id = 'devices1'
+        div_id = 'devices2'
     }
     
     displayDevicesList(div_id, data)
