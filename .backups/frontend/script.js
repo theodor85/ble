@@ -46,6 +46,9 @@ const min_dB = -100
 const max_dB = -20
 
 function displayDrawing(data){
+    
+    ctx.clearRect(0,0,300,300);
+
     // рисуем anchors
     // anchor1
     ctx.beginPath();
@@ -70,7 +73,7 @@ function displayDrawing(data){
         const device = data[i];
         
         points_number = data.length;
-        const x = Math.round( canvas_width / points_number * (i + 1) )
+        const x = Math.round( canvas_width / (points_number+1) * (i + 1) )
 
         const scale = canvas_height / (max_dB - min_dB)
         const average_signal = (device.rssi_anchor1 + device.rssi_anchor2) / 2
