@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="assets/bootstrap.min.css">
     <link rel="stylesheet" href="styles.css">
 
     <title>Расположение устройств</title>
@@ -18,13 +18,23 @@
       </header>
       <hr>
       <h1>Расположение устройств</h1>
-      <p id="alert" class="my-red"></p>
+      <div class="row">
+        <div class="col-sm-12">
+          <canvas id="draw" width="820" height="580"></canvas>
+        </div>
+      </div>
       <br>
-      <canvas id="canvas" width="300" height="300"></canvas>
+      <div class="row">
+        <div class="col-sm-6">
+          <canvas id="canvas" width="300" height="300"></canvas>
+          <br>
+        </div>
+        <div class="col-sm-6">
+          <div id="devices"></div>
+        </div>
+      </div>
       <br>
-      <div id="devices"></div>
     </div>
-    
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

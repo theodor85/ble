@@ -116,10 +116,78 @@ function displayDrawing(data){
     }
 }
 
+var blink_counter = 0; // счетчик для моргания
+
+function displayDrawingNew(data){
+    var canvas = document.getElementById('draw');
+    var ctx = canvas.getContext("2d");
+
+    const canvas_width = 820
+    const canvas_height = 580
+
+    const anchor1_x = 236;
+    const anchor1_y = 335;
+    const anchor1_r = 200;
+
+    const anchor2_x = 584;
+    const anchor2_y = 338;
+    const anchor2_r = 195;
+
+    const min_dB = -100
+    const max_dB = -20
+    var restricted_area = 0
+
+    const scale = canvas_height / (max_dB - min_dB)
+    ctx.clearRect(0,0,300,300);
+    
+    var img = new Image();
+    img.src = 'assets/photo_2020-06-08_15-34-51.jpg';
+
+    img.onload = function(){
+
+        blink_counter++; // счетчик для моргания
+
+        ctx.drawImage(img,0,0);
+        if (blink_counter % 2 == 0)
+            ctx.strokeStyle = 'red';
+        else 
+            ctx.strokeStyle = 'black';
+        // круги, чтобы моргали
+        ctx.beginPath();
+        ctx.arc(anchor1_x, anchor1_y, anchor1_r, 0, Math.PI*2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(anchor2_x, anchor2_y, anchor2_r, 0, Math.PI*2);
+        ctx.stroke();
+
+        // рисуем точки
+        for (let i = 0; i < data.length; i++) {
+            const device = data[i];
+            
+            points_number = data.length;
+            const x = Math.round( canvas_width / (points_number+1) * (i + 1) )
+
+            //const average_signal = (device.rssi_anchor1 + device.rssi_anchor2) / 2
+            const y = Math.round( scale * (device.anchor1[device.anchor1.length-1].rssi - min_dB) )
+
+            ctx.beginPath();
+            ctx.fillStyle = 'green';
+            ctx.arc(x, y, 5, 0, Math.PI*2);
+            ctx.fill();
+
+            // делаем надпись
+            ctx.fillStyle = 'black';
+            ctx.fillText(device.addr, x+7, y-7)
+        }
+    };
+}
+
 sock.onmessage = function draw(message) {
     var data = JSON.parse(JSON.parse(message.data))
     console.log(data)
 
-    displayDrawing(data)
+    //displayDrawing(data)
+    displayDrawingNew(data)
     displayDevicesList(data)
 }
