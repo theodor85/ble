@@ -18,12 +18,19 @@ function displayDevicesList(data){
     var div_devices = document.getElementById('devices');
     var html_list_devices = ''
     for (let i = 0; i < data.length; i++) {
-        const device = data[i];
+        const device = data[i]
+        const signal_anchor1 = device.anchor1[data[i].anchor1.length - 1].rssi;
+        const signal_anchor2 = device.anchor2[data[i].anchor2.length - 1].rssi;
 
-        var str_vioation = ''
-        if (device.violation) {
-            str_vioation = 'Нарушение!'
+        var str_vioation_anchor1 = ''
+        if (device.anchor1[data[i].anchor1.length - 1].violation) {
+            str_vioation_anchor1 = 'Нарушение anchor1! '
         }
+        var str_vioation_anchor2 = ''
+        if (device.anchor2[data[i].anchor2.length - 1].violation) {
+            str_vioation_anchor2 = 'Нарушение anchor2! '
+        }
+        var str_vioation = str_vioation_anchor1 + str_vioation_anchor2
         html_list_devices = html_list_devices +
         `
         <a href="#" class="list-group-item list-group-item-action">
@@ -31,7 +38,7 @@ function displayDevicesList(data){
             <h5 class="mb-1">${device.addr}</h5>
             <small class="my-red">${str_vioation}</small>
           </div>
-          <p class="mb-1">${'anchor1=' + device.rssi_anchor1 + ' дБ; ' + 'anchor2=' + device.rssi_anchor2 + ' дБ'}</p>
+          <p class="mb-1">${'anchor1=' + signal_anchor1 + ' дБ; ' + 'anchor2=' + signal_anchor2 + ' дБ'}</p>
         </a>
         `
     }
@@ -85,8 +92,18 @@ function displayDrawing(data){
         points_number = data.length;
         const x = Math.round( canvas_width / (points_number+1) * (i + 1) )
 
-        const average_signal = (device.rssi_anchor1 + device.rssi_anchor2) / 2
-        const y = Math.round( scale * (average_signal - min_dB) )
+        //const average_signal = (device.rssi_anchor1 + device.rssi_anchor2) / 2
+        const y = Math.round( scale * (device.anchor1[device.anchor1.length-1].rssi - min_dB) )
+
+        // рисуем трек
+        ctx.beginPath();
+        let path_y = Math.round( scale * (device.anchor1[0].rssi - min_dB) )
+        ctx.moveTo(x, path_y)
+        device.anchor1.forEach(point => {
+            path_y = Math.round( scale * (point.rssi - min_dB) )
+            ctx.lineTo(x, path_y)
+        });
+        ctx.stroke();
 
         ctx.beginPath();
         ctx.fillStyle = 'green';

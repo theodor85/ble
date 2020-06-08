@@ -35,14 +35,22 @@ class DevicesData:
                 if dev['addr_point'] == item['addr']:
                     found_flag = True
                     # обнoвляем пришедшие данные
-                    item['rssi_' + data['anchor']] = dev['rssi']
-                    item['violation'] = is_restricted_area_violation(dev['rssi'])
+                    if not item.get(data['anchor']):
+                        item[data['anchor']] = list()
+                    item[data['anchor']].append({
+                        'rssi': dev['rssi'],
+                        'violation': is_restricted_area_violation(dev['rssi']),
+                    })
                     break
             # если элемент не найден, добавляем новый
             if not found_flag:
+                history = list()
                 self._devices_list.append({
                     'addr': dev['addr_point'],
-                    'rssi_' + data['anchor']: dev['rssi'],
+                    data['anchor']: history,
+                })
+                history.append({
+                    'rssi': dev['rssi'],
                     'violation': is_restricted_area_violation(dev['rssi']),
                 })
 
@@ -54,12 +62,11 @@ devices_data = DevicesData()
 
 
 async def get_points(request):
-    ''' Получает данные о точках (устройтвах), преобразует их в
-        координаты, и помещает в очередь для отправки на frontend
+    ''' Получает данные о точках (устройтвах)
     '''
     data = await request.json()
     logger.info(f'Получены данные {data}')
-    
+
     devices_data.add_received_data(data)
     return web.Response(text='OK')
 
