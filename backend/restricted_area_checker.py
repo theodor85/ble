@@ -23,11 +23,11 @@ def is_restricted_area_violation(x, y):
 
 def get_restricted_area_size():
     try:
-        restr_area_size = int(Config().restricted_area)
+        max_level = int(Config().max_level)
     except AttributeError:
         # запретная зона не определена
         return 0
-    return restr_area_size
+    return max_level
 
 
 class Config:

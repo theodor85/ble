@@ -19,7 +19,7 @@ handler.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
 
-SCAN_TIME = 3
+SCAN_TIME = 7
 SOURCE_NAME = 'anchor1'
 
 

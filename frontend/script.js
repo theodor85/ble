@@ -13,58 +13,82 @@ sock.onerror = function (error) {
     console.log(error);
 };
 
-function displayDevicesList(div_id, data){
-    // выводим список устройств
-    var div_devices = document.getElementById(div_id);
-    var html_list_devices = `<p>${data.anchor}</p>`
-    for (let i = 0; i < data.ble_points.length; i++) {
-        const device = data.ble_points[i];
+var blink_counter = 0; // счетчик для моргания
+var canvas = document.getElementById('draw');
+var ctx = canvas.getContext("2d");
 
-        var str_vioation = ''
-        if (device.violation) {
-            str_vioation = 'Нарушение!'
+
+function displayDrawingNew(data){
+
+    const canvas_width = 820
+    const canvas_height = 580
+
+    const anchor1_x = 236;
+    const anchor1_y = 335;
+    const anchor1_r = 200;
+
+    const anchor2_x = 584;
+    const anchor2_y = 338;
+    const anchor2_r = 195;
+
+    const min_dB = -100
+    const max_dB = -20
+    var restricted_area = 0
+
+    const scale = 5 //canvas_height / (max_dB - min_dB)
+    ctx.clearRect(0,0,300,300);
+    
+    var img = new Image();
+    img.src = 'assets/photo_2020-06-08_15-34-51.jpg';
+
+    img.onload = function(){
+
+        blink_counter++; // счетчик для моргания
+
+        let is_violation = false;
+        data.forEach(device => {
+            if (device.violation){
+                is_violation = true
+            }
+        });
+
+        ctx.drawImage(img,0,0);
+        if ((blink_counter % 2 == 0) && (is_violation)) {
+            ctx.strokeStyle = 'red';
+        }else {
+            ctx.strokeStyle = 'black'; 
         }
-        html_list_devices = html_list_devices +
-        `
-        <a href="#" class="list-group-item list-group-item-action">
-          <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">${device.addr_point}</h5>
-            <small class="my-red">${str_vioation}</small>
-          </div>
-          <p class="mb-1">${device.rssi + ' дБ'}</p>
-        </a>
-        `
-    }
-    div_devices.innerHTML = html_list_devices
+            
+        // круги, чтобы моргали
+        ctx.beginPath();
+        ctx.arc(anchor1_x, anchor1_y, anchor1_r, 0, Math.PI*2);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(anchor2_x, anchor2_y, anchor2_r, 0, Math.PI*2);
+        ctx.stroke();
+
+        // рисуем точки
+        for (let i = 0; i < data.length; i++) {
+            const device = data[i];
+            // умножаем для масштабирования координат
+            let x = scale*device.x;
+            let y = scale*device.y;
+            ctx.beginPath();
+            ctx.fillStyle = 'green';
+            ctx.arc(x, y, 5, 0, Math.PI*2);
+            ctx.fill();
+
+            // делаем надпись
+            ctx.fillStyle = 'black';
+            ctx.fillText(device.addr, x+7, y-7)
+        }
+    };
 }
 
 sock.onmessage = function draw(message) {
     var data = JSON.parse(JSON.parse(message.data))
     console.log(data)
 
-    var div_id = ''
-    if (data.anchor=='anchor1') {
-        div_id = 'devices1'
-    }else{
-        div_id = 'devices2'
-    }
-    
-    displayDevicesList(div_id, data)
-
-    // отображаем сообщение, если нарушена
-    // запретная зона
-    let violators = ''
-    for (let i = 0; i < data.length; i++) {
-        const device = data[i];
-        if (device.violation === true){
-            violators = violators + device.dev_addr + '; '
-        }
-    }
-
-    var p_alert = document.getElementById('alert');
-    if (violators){
-        p_alert.innerHTML= 'ВНИМАНИЕ! Следующие устройства находятся в запретной зоне: ' + violators;
-    }else{
-        p_alert.innerHTML= ''
-    }
+    displayDrawingNew(data)
 }
